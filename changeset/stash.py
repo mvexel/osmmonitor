@@ -4,6 +4,6 @@ import logging
 
 logger = logging.getLogger('root')
 
-def elasticsearch(changeset_xml):
+def elasticsearch(xml):
     logger.info('stashing changeset in es')
-    logger.info(changeset_xml)
+    logger.info(xml)

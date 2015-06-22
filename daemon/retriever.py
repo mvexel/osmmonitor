@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from daemon import Daemon
-from changeset import retrieve
+from changeset import retrieve, stash
 import sched
 import time
 
@@ -11,5 +11,6 @@ class ChangesetRetrieverDaemon(Daemon):
 
     def run(self):
         scheduler = sched.scheduler(time.time, time.sleep)
-        retrieve.from_osm(scheduler)
+        xml = retrieve.from_osm(scheduler)
+        stash.elasticsearch(xml)
         scheduler.run()
