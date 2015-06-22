@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 from daemon import retriever
+import logging
 import config
 
 changesetretriever = retriever.ChangesetRetrieverDaemon(
     '/tmp/changeset_retriever.pid')
-if config['debug']:
+if config.debug:
     changesetretriever.run()
 else:
     changesetretriever.start()

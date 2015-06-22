@@ -1,4 +1,9 @@
 #!/usr/bin/env python
 
-def latest_from_osm():
-    print 'getting latest from osm'
+from changeset import util
+
+def from_osm(scheduler=None, sequence=None):
+    print 'retrieving from osm'
+    if sequence is None:
+        sequence = util.latest_sequence_id()
+    print sequence
