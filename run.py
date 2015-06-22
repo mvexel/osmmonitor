@@ -3,6 +3,10 @@
 from daemon import retriever
 import logging
 import config
+import os
+import log
+
+logger = log.setup_logger(config.rootlogger)
 
 changesetretriever = retriever.ChangesetRetrieverDaemon(
     '/tmp/changeset_retriever.pid')
