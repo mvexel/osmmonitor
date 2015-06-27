@@ -1,7 +1,7 @@
 import logging
 
 # log level
-loglevel = logging.INFO
+loglevel = logging.WARNING
 # directory for log files
 logdir = '/tmp'
 # temp file directory
