@@ -4,6 +4,8 @@ import logging
 loglevel = logging.INFO
 # directory for log files
 logdir = '/tmp'
+# temp file directory
+tempdir = '/tmp'
 # name for root logger
 rootlogger = 'root'
 

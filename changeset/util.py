@@ -14,7 +14,13 @@ def latest_sequence_id():
     state_url = os.path.join(config.changeset_base_url, 'state.yaml')
     logger.info('getting state from {}'.format(state_url))
     response = requests.get(state_url)
+    if not response.ok:
+        logger.warning('could not get statefile from OSM')
+        return None        
     state = yaml.load(response.text)
+    if not state or not 'sequence' in state:
+        logger.warning('could not parse statefile from OSM')
+        return None
     return state['sequence']
 
 def sequence_as_path(sequence):

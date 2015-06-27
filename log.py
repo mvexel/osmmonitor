@@ -16,3 +16,6 @@ def setup_logger(name):
         streamhandler.setFormatter(formatter)
         logger.addHandler(streamhandler)
     return logger
+
+def get_logger(name):
+    return logging.getLogger(name) or None

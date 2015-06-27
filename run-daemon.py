@@ -2,8 +2,8 @@
 
 import os
 import config
-import logging
-from daemon import ChangesetRetrieverDaemon
+import log
+from daemon.retriever import ChangesetRetrieverDaemon
 from changeset import OSMChangeset
 
 if __name__ == '__main__':
@@ -16,7 +16,7 @@ if __name__ == '__main__':
                         filemode='w')
 
     logger = logging.getLogger(__name__)
-    if config.application['debug']:
+    if config.debug:
         sh = logging.StreamHandler()
         sh.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -26,9 +26,9 @@ if __name__ == '__main__':
     logger.info('logger initiated')
 
     # start retriever daemon
-    changesetretriever = ChangesetRetrieverDaemon(
-        '/tmp/changeset_retriever.pid')
-    if config.application['debug']:
-        changesetretriever.run()
+    changeset_retriever = ChangesetRetrieverDaemon(
+        os.path.join(config.tempdir, 'changeset_retriever.pid'))
+    if config.debug:
+        changeset_retriever.run()
     else:
-        changesetretriever.start()
+        changeset_retriever.start()
