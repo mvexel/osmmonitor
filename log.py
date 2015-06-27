@@ -5,7 +5,9 @@ import config
 import os
 
 
-def setup_logger(name):
+def setup_logger(name=None):
+    if name is None:
+        name = config.rootlogger
     logger = logging.getLogger(name)
     logger.setLevel(config.loglevel)
     filehandler = logging.FileHandler(os.path.join(config.logdir, '{}.log'.format(__name__)))
@@ -17,5 +19,7 @@ def setup_logger(name):
         logger.addHandler(streamhandler)
     return logger
 
-def get_logger(name):
+def get_logger(name=None):
+    if name is None:
+        name = config.rootlogger
     return logging.getLogger(name) or None

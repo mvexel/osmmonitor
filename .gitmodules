@@ -1,3 +1,3 @@
-[submodule "daemon/python-daemon"]
-	path = daemon/python-daemon
+[submodule "daemon"]
+	path = daemon
 	url = git@github.com:serverdensity/python-daemon.git

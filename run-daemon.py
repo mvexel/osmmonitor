@@ -3,32 +3,28 @@
 import os
 import config
 import log
-from daemon.retriever import ChangesetRetrieverDaemon
-from changeset import OSMChangeset
+from daemon import Daemon
+
+class ChangesetRetrieverDaemon(Daemon):
+    """daemon class to handle changeset retrieval"""
+
+    def run(self):
+        logger = log.get_logger()
+        logger.info('starting daemon...')
 
 if __name__ == '__main__':
 
-    # set up logging
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-                        datefmt='%m-%d %H:%M',
-                        filename='/tmp/osmmonitor.log',
-                        filemode='w')
-
-    logger = logging.getLogger(__name__)
-    if config.debug:
-        sh = logging.StreamHandler()
-        sh.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        sh.setFormatter(formatter)
-        logger.addHandler(sh)
-
-    logger.info('logger initiated')
-
+    #set up logging
+    log.setup_logger()
+    
     # start retriever daemon
-    changeset_retriever = ChangesetRetrieverDaemon(
-        os.path.join(config.tempdir, 'changeset_retriever.pid'))
+    retriever = ChangesetRetrieverDaemon(
+        os.path.join(
+            config.tempdir,
+            '{}.pid'.format(__name__)))
     if config.debug:
-        changeset_retriever.run()
+        retriever.verbose = 1
+        retriever.start()
     else:
-        changeset_retriever.start()
+        retriever.verbose = 0
+        retriever.run()
