@@ -4,7 +4,6 @@ import requests
 import config
 import yaml
 import os
-import logging
 import zlib
 import log
 

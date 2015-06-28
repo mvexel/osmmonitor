@@ -18,14 +18,10 @@ class OSMChangesetsMeta():
     def latest_from_osm(self):
         """returns the latest OSM changesets metadata."""
 
-        import yaml
-        import zlib
-        import untangle
-
         logger = log.get_logger()
 
         try:
-            new_changesets_meta = self.from_osm() 
+            new_changesets_meta = self.from_osm()
             if new_changesets_meta is not None:
                 self.XML = new_changesets_meta
                 logger.debug(self.XML)
@@ -42,6 +38,7 @@ class OSMChangesetsMeta():
         """returns changesets metadata as a python dictionary"""
 
         logger = log.get_logger()
+
         changesets_dict = xmltodict.parse(self.XML)
         if 'changeset' in changesets_dict['osm']:
             return changesets_dict['osm']['changeset']
@@ -49,15 +46,18 @@ class OSMChangesetsMeta():
             logger.error('no changesets in result')
             return {}
 
-    def from_osm(sequence=None):
+    def from_osm(self, sequence=None):
         """retrieve changesets metadata from OSM.
         If sequence ID is passed in, retrieve that particular
         changesets metadata file. Otherwise gets the latest
         changesets metadata."""
 
+        logger = log.get_logger()
+
+        logger.debug('sequence is {}'.format(sequence))
         if sequence is None:
             sequence = util.latest_sequence_id()
-            logger.debug('sequence is {}'.format(sequence))
+        logger.debug('sequence is {}'.format(sequence))
         if sequence > config.sequence:
             url = util.url_from_sequence(sequence)
             logger.debug('url is {}'.format(url))
