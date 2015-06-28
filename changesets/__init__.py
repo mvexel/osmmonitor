@@ -54,7 +54,6 @@ class OSMChangesetsMeta():
 
         logger = log.get_logger()
 
-        logger.debug('sequence is {}'.format(sequence))
         if sequence is None:
             sequence = util.latest_sequence_id()
         logger.debug('sequence is {}'.format(sequence))
