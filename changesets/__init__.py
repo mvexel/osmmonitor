@@ -2,9 +2,10 @@
 
 import config
 import util
-import retrieve
 import log
 import xmltodict
+import requests
+import os
 
 class OSMChangesetsMeta():
     """A batch of OSM Changeset metadata"""
@@ -18,15 +19,13 @@ class OSMChangesetsMeta():
         """returns the latest OSM changesets metadata."""
 
         import yaml
-        import requests
-        import os
         import zlib
         import untangle
 
         logger = log.get_logger()
 
         try:
-            new_changesets_meta = retrieve.from_osm() 
+            new_changesets_meta = self.from_osm() 
             if new_changesets_meta is not None:
                 self.XML = new_changesets_meta
                 logger.debug(self.XML)
@@ -50,6 +49,27 @@ class OSMChangesetsMeta():
             logger.error('no changesets in result')
             return {}
 
+    def from_osm(sequence=None):
+        """retrieve changesets metadata from OSM.
+        If sequence ID is passed in, retrieve that particular
+        changesets metadata file. Otherwise gets the latest
+        changesets metadata."""
+
+        if sequence is None:
+            sequence = util.latest_sequence_id()
+            logger.debug('sequence is {}'.format(sequence))
+        if sequence > config.sequence:
+            url = util.url_from_sequence(sequence)
+            logger.debug('url is {}'.format(url))
+            response = requests.get(url, stream=True)
+            if not response.ok:
+                logger.error('could not get changesets meta sequence {}'.format(sequence))
+            config.sequence = sequence
+            logger.debug('config.sequence is now {}'.format(config.sequence))
+            return util.parse_gz_response(response)
+        else:
+            logger.info('nothing new.')
+        return None
 
     @classmethod
     def latest_from_sequence(cls, sequence_id):
