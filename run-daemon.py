@@ -21,7 +21,7 @@ import time
 from elasticsearch import Elasticsearch
 from daemon import Daemon
 from changesets import OSMChangesetsMeta
-from diffs import OSMAugmentedDiff
+from diff import OSMAugmentedDiff
 from docopt import docopt
 
 
@@ -61,39 +61,39 @@ class ChangesetsMetaRetrieverDaemon(Daemon):
             logger.debug(e.message)
 
 
-class DiffsRetrieverDaemon(Daemon):
+class diffRetrieverDaemon(Daemon):
     """daemon class to handle diff retrieval"""
 
     scheduler = sched.scheduler(time.time, time.sleep)
-    diffs = OSMAugmentedDiff()
+    diff = OSMAugmentedDiff()
     logger = log.get_logger()
 
     def run(self):
-        logger.info('starting diffs retriever daemon...')
-        self.retrieve_diffs(self.scheduler)
+        logger.info('starting diff retriever daemon...')
+        self.retrieve_diff(self.scheduler)
         self.scheduler.run()
 
-    def retrieve_diffs(self, scheduler):
-        logger.debug('getting diffs')
-        if self.diffs.latest_from_overpass():
-            self.stash_diffs()
-        scheduler.enter(config.check_interval, 1, self.retrieve_diffs, (self.scheduler,))
+    def retrieve_diff(self, scheduler):
+        logger.debug('getting diff')
+        if self.diff.latest_from_overpass():
+            self.stash_diff()
+        scheduler.enter(config.check_interval, 1, self.retrieve_diff, (self.scheduler,))
 
-    def stash_diffs(self):
-        """stash retrieved diffs in ES"""
+    def stash_diff(self):
+        """stash retrieved diff in ES"""
         try:
             es = Elasticsearch()
             logger.debug('sequence is {}'.format(config.diffs_sequence))
-            diffs = self.diffs.as_dict()
-            for diff in diffs:
-                logger.debug('storing diff for {}'.format(config.diffs_sequence))
+            actions = self.diff.as_dict()
+            for action in actions:
+                logger.debug('storing action for {}'.format(config.diffs_sequence))
                 es.index(
                     index="osm",
-                    doc_type="diffs",
+                    doc_type="diff",
                     id=config.diffs_sequence,
-                    body=diff)
+                    body=action)
         except Exception as e:
-            logger.error('could not store diffs in ES')
+            logger.error('could not store diff in ES')
             logger.debug(e.message)
 
 
@@ -113,19 +113,19 @@ if __name__ == '__main__':
             '{}.pid'.format('changesets_{}'.format(__name__))))
 
     # and a changesets retriever
-    diffs_retriever = DiffsRetrieverDaemon(
+    diff_retriever = diffRetrieverDaemon(
         os.path.join(
             config.tempdir,
-            '{}.pid'.format('diffs_{}'.format(__name__))))
+            '{}.pid'.format('diff_{}'.format(__name__))))
 
     # handle debugging mode
     if arguments['--debug']:
         logger.debug('debugging mode')
         changesets_retriever.verbose = 1
-        diffs_retriever.verbose = 1
+        diff_retriever.verbose = 1
     else:
         changesets_retriever.verbose = 0
-        diffs_retriever.verbose = 0
+        diff_retriever.verbose = 0
 
     # stop daemons
     if arguments['stop']:
@@ -134,8 +134,8 @@ if __name__ == '__main__':
             changesets_retriever.stop()
             print('changesets retriever stopped.')
         if arguments['diffs']:
-            diffs_retriever.stop()
-            print('diffs retriever stopped.')
+            diff_retriever.stop()
+            print('diff retriever stopped.')
 
     # start daemons
     if arguments['start']:
@@ -150,13 +150,13 @@ if __name__ == '__main__':
                 changesets_retriever.start()
                 print('started!')
 
-        # start diffs retriever daemon
+        # start diff retriever daemon
         if arguments['diffs']:
             if arguments['--debug']:
                 # run in foreground
-                diffs_retriever.run()
+                diff_retriever.run()
             else:
                 # run in background, output something meaningful
-                print('starting diffs retriever...')
-                diffs_retriever.start()
+                print('starting diff retriever...')
+                diff_retriever.start()
                 print('started!')

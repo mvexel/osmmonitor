@@ -34,9 +34,7 @@ def latest_diff_sequence():
     if not match:
         logger.error('state file is borked, does not contain sequenceNumber')
         return None
-    logger.debug(match)
     seq = match.group(1)
-    logger.debug(seq)
     return seq
 
 

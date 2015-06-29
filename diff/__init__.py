@@ -19,7 +19,6 @@ class OSMAugmentedDiff():
         """returns the latest augmented diff."""
 
         logger = log.get_logger()
-
         try:
             new_diff = self.from_overpass()
             if new_diff is not None:
@@ -37,8 +36,12 @@ class OSMAugmentedDiff():
         """returns the augmented diff as a python dictionary"""
 
         logger = log.get_logger()
-
-        # FIXME implement
+        diff_dict = xmltodict.parse(self.xml)
+        if 'osm' in diff_dict:
+            return diff_dict['osm']
+        else:
+            logger.error('no osm root element in diff file')
+            return None
 
     def from_overpass(self, sequence=None):
         """retrieve augmented diff from Overpass API.
@@ -59,7 +62,6 @@ class OSMAugmentedDiff():
             response = requests.get(url)
             if not response.ok:
                 logger.error('could not get augmented diff sequence {}'.format(sequence))
-            logger.debug(response.text)
             config.diffs_sequence = sequence
             return response.text
         else:
