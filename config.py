@@ -12,9 +12,6 @@ rootlogger = 'root'
 # base URL for changesets
 changesets_base_url = 'http://planet.osm.org/replication/changesets/'
 
-# debug mode
-debug = True
-
 # check interval for new changesets, in seconds
 check_interval = 30
 

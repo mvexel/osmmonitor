@@ -57,14 +57,14 @@ class OSMChangesetsMeta():
         if sequence is None:
             sequence = util.latest_sequence_id()
         logger.debug('sequence is {}'.format(sequence))
-        if sequence > config.sequence:
+        if sequence > config.changesets_sequence:
             url = util.url_from_sequence(sequence)
             logger.debug('url is {}'.format(url))
             response = requests.get(url, stream=True)
             if not response.ok:
                 logger.error('could not get changesets meta sequence {}'.format(sequence))
-            config.sequence = sequence
-            logger.debug('config.sequence is now {}'.format(config.sequence))
+            config.changesets_sequence = sequence
+            logger.debug('config.changesets_sequence is now {}'.format(config.changesets_sequence))
             return util.parse_gz_response(response)
         else:
             logger.info('nothing new.')

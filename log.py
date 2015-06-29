@@ -5,7 +5,7 @@ import config
 import os
 
 
-def setup_logger(name=None):
+def setup_logger(name=None, debug=False):
     """Set up the logger."""
 
     if name is None:
@@ -17,7 +17,7 @@ def setup_logger(name=None):
 
     filehandler.setFormatter(formatter)
 
-    if config.debug:
+    if debug:
         streamhandler = logging.StreamHandler()
         streamhandler.setFormatter(formatter)
         logger.addHandler(streamhandler)
