@@ -21,6 +21,7 @@ import time
 from elasticsearch import Elasticsearch
 from daemon import Daemon
 from changesets import OSMChangesetsMeta
+from diffs import OSMAugmentedDiff
 from docopt import docopt
 
 
@@ -64,7 +65,7 @@ class DiffsRetrieverDaemon(Daemon):
     """daemon class to handle diff retrieval"""
 
     scheduler = sched.scheduler(time.time, time.sleep)
-    diffs = None
+    diffs = OSMAugmentedDiff()
     logger = log.get_logger()
 
     def run(self):

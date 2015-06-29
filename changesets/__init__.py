@@ -55,7 +55,7 @@ class OSMChangesetsMeta():
         logger = log.get_logger()
 
         if sequence is None:
-            sequence = util.latest_sequence_id()
+            sequence = util.latest_changeset_sequence()
         logger.debug('sequence is {}'.format(sequence))
         if sequence > config.changesets_sequence:
             url = util.url_from_sequence(sequence)
